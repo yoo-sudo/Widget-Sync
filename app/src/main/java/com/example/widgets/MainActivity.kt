@@ -5,7 +5,9 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.example.widgets.model.Providers
 import com.example.widgets.ui.theme.WidgetsTheme
 import com.google.gson.Gson
-
+import java.io.ByteArrayOutputStream
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
@@ -61,6 +63,7 @@ class MainActivity : ComponentActivity() {
                                     Log.i("packageName", toJsonString(getAppNameFromPackageName(this@MainActivity, it.providerInfo.provider.packageName))!!)
                                     Log.i("minHeight", toJsonString(getAppNameFromPackageName(this@MainActivity, it.providerInfo.minHeight.toString()))!!)
                                     Log.i("minWidth", toJsonString(getAppNameFromPackageName(this@MainActivity, it.providerInfo.minWidth.toString()))!!)
+                                    Log.i("appIcon", toJsonString(getAppNameFromPackageName(this@MainActivity, encodeToBase64(getAppIcon(it.providerInfo.provider.packageName)))))
                                 }
                             })
                             {
@@ -127,4 +130,12 @@ fun getAppNameFromPackageName(context: Context, packageName: String): String {
         null
     }
     return (if (ai != null) pm.getApplicationLabel(ai) else "(unknown)") as String
+}
+
+fun getAppIcon(context: Context, packageName: String) = context.packageManager.getApplicationIcon(packageName)
+
+fun encodeToBase64(image: Bitmap): String? {
+    val baos = ByteArrayOutputStream()
+    image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+    return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
 }
