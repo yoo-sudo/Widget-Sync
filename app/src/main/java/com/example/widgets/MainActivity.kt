@@ -35,16 +35,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import com.example.widgets.model.Providers
 import com.example.widgets.ui.theme.WidgetsTheme
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
+
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("LIFECYCLE", "onCreate()")
         mainViewModel.processProviders(this)
 
         setContent {
@@ -60,10 +63,11 @@ class MainActivity : ComponentActivity() {
                                 val selectedProviders = mainViewModel.installedProviders.filter { it.isChecked }
                                 selectedProviders.forEach {
                                     Log.i("provider", toJsonString(it.providerInfo.provider)!!)
-                                    Log.i("packageName", toJsonString(getAppNameFromPackageName(this@MainActivity, it.providerInfo.provider.packageName))!!)
-                                    Log.i("minHeight", toJsonString(getAppNameFromPackageName(this@MainActivity, it.providerInfo.minHeight.toString()))!!)
-                                    Log.i("minWidth", toJsonString(getAppNameFromPackageName(this@MainActivity, it.providerInfo.minWidth.toString()))!!)
-                                    Log.i("appIcon", toJsonString(getAppNameFromPackageName(this@MainActivity, encodeToBase64(getAppIcon(it.providerInfo.provider.packageName)))))
+                                    Log.i("packageName", it.providerInfo.provider.packageName)
+                                    Log.i("minHeight", it.providerInfo.minHeight.toString())
+                                    Log.i("minWidth", it.providerInfo.minWidth.toString())
+                                    Log.i("appName", getAppNameFromPackageName(this@MainActivity, it.providerInfo.provider.packageName))
+                                    Log.i("appIcon",encodeToBase64(getAppIcon(this@MainActivity, it.providerInfo.provider.packageName)).toString())
                                 }
                             })
                             {
@@ -74,6 +78,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LIFECYCLE", "onDestroy()")
     }
 }
 
@@ -132,7 +146,7 @@ fun getAppNameFromPackageName(context: Context, packageName: String): String {
     return (if (ai != null) pm.getApplicationLabel(ai) else "(unknown)") as String
 }
 
-fun getAppIcon(context: Context, packageName: String) = context.packageManager.getApplicationIcon(packageName)
+fun getAppIcon(context: Context, packageName: String) = context.packageManager.getApplicationIcon(packageName).toBitmap()
 
 fun encodeToBase64(image: Bitmap): String? {
     val baos = ByteArrayOutputStream()

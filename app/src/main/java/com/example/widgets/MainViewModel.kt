@@ -15,7 +15,6 @@ class MainViewModel: ViewModel() {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         for (provider in appWidgetManager.installedProviders) {
             _installedProviders.add(Providers(false, provider))
-
         }
     }
 
