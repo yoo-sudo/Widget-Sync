@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
@@ -49,16 +50,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Log.d("LIFECYCLE", "onCreate()")
         mainViewModel.processProviders(this)
-
+        val onItemClick = { index: Int ->
+            mainViewModel.setSelectionStatus(index, mainViewModel.installedProviders[index].isChecked.not())
+        }
         setContent {
             WidgetsTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        val onItemClick = { index: Int ->
-                            mainViewModel.setSelectionStatus(index, mainViewModel.installedProviders[index].isChecked.not())
-                        }
-                        LazyColumnWithSelection(onClick = onItemClick, mainViewModel.installedProviders)
-                        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    Column {
+                        LazyColumnWithSelection(modifier = Modifier
+                            .height(700.dp), onClick = onItemClick, mainViewModel.installedProviders)
+                        Box(modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .wrapContentSize()) {
                             Button(onClick = {
                                 val selectedProviders = mainViewModel.installedProviders.filter { it.isChecked }
                                 selectedProviders.forEach {
@@ -67,10 +70,9 @@ class MainActivity : ComponentActivity() {
                                     Log.i("minHeight", it.providerInfo.minHeight.toString())
                                     Log.i("minWidth", it.providerInfo.minWidth.toString())
                                     Log.i("appName", getAppNameFromPackageName(this@MainActivity, it.providerInfo.provider.packageName))
-                                    Log.i("appIcon",encodeToBase64(getAppIcon(this@MainActivity, it.providerInfo.provider.packageName)).toString())
+                                    Log.i("appIcon", encodeToBase64(getAppIcon(this@MainActivity, it.providerInfo.provider.packageName)).toString())
                                 }
-                            })
-                            {
+                            }) {
                                 Text(text = "Send Providers", Modifier.wrapContentSize(), color = Color.White)
                             }
                         }
@@ -92,12 +94,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LazyColumnWithSelection(onClick: (Int) -> Unit,installedProviders: SnapshotStateList<Providers>) {
+fun LazyColumnWithSelection(modifier: Modifier, onClick: (Int) -> Unit, installedProviders: SnapshotStateList<Providers>) {
     LazyColumn(
-        modifier = Modifier
-            .wrapContentWidth()
-            .fillMaxWidth(),
-    ){
+        modifier = modifier,
+    ) {
         itemsIndexed(items = installedProviders) { index, appWidgetProviderInfo ->
             ItemView(
                 index = index,
@@ -109,34 +109,33 @@ fun LazyColumnWithSelection(onClick: (Int) -> Unit,installedProviders: SnapshotS
 }
 
 @Composable
-fun ItemView(index: Int, onClick: (Int) -> Unit, appWidgetProviderInfo: Providers){
+fun ItemView(index: Int, onClick: (Int) -> Unit, appWidgetProviderInfo: Providers) {
     val configuration = LocalConfiguration.current
     Row(
         modifier = Modifier
             .wrapContentHeight()
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .padding(8.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = appWidgetProviderInfo.providerInfo.provider.className,
             modifier = Modifier
                 .wrapContentHeight()
-                .width(if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 700.dp else 450.dp)
+                .width(if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 700.dp else 350.dp)
         )
-        Checkbox(checked = appWidgetProviderInfo.isChecked,
-            onCheckedChange = {
-                onClick.invoke(index)
-            })
+        Checkbox(checked = appWidgetProviderInfo.isChecked, onCheckedChange = {
+            onClick.invoke(index)
+        })
     }
 }
 
-fun toJsonString(src: Any): String? = try {
+private fun toJsonString(src: Any): String? = try {
     Gson().toJson(src)
 } catch (e: Exception) {
     null
 }
 
-fun getAppNameFromPackageName(context: Context, packageName: String): String {
+private fun getAppNameFromPackageName(context: Context, packageName: String): String {
     val pm: PackageManager = context.packageManager
     val ai: ApplicationInfo? = try {
         pm.getApplicationInfo(packageName, 0)
@@ -146,9 +145,9 @@ fun getAppNameFromPackageName(context: Context, packageName: String): String {
     return (if (ai != null) pm.getApplicationLabel(ai) else "(unknown)") as String
 }
 
-fun getAppIcon(context: Context, packageName: String) = context.packageManager.getApplicationIcon(packageName).toBitmap()
+private fun getAppIcon(context: Context, packageName: String) = context.packageManager.getApplicationIcon(packageName).toBitmap()
 
-fun encodeToBase64(image: Bitmap): String? {
+private fun encodeToBase64(image: Bitmap): String? {
     val baos = ByteArrayOutputStream()
     image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
     return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
