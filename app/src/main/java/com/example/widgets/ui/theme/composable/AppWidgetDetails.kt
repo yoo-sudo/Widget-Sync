@@ -36,7 +36,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 @Composable
 fun AppWidgetDetails(mainViewModel: MainViewModel, context: Context, onClick: () -> Unit) {
     val onCheck = { index: Int ->
-        mainViewModel.setSelectionStatus(index, mainViewModel.installedProviders[index].isChecked.not())
+        mainViewModel.setSelectionStatus(index, mainViewModel.providerInfo[index].isChecked.not())
     }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -62,7 +62,7 @@ fun AppWidgetDetails(mainViewModel: MainViewModel, context: Context, onClick: ()
                     Text(text = "Send Providers", Modifier.wrapContentSize(), color = Color.White)
                 }
             }
-            WidgetDetails(context = context, onCheck = onCheck, installedProviders = mainViewModel.installedProviders)
+            WidgetDetails(context = context, onCheck = onCheck, installedProviders = mainViewModel.providerInfo)
         }
 
     }

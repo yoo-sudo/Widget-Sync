@@ -1,7 +1,6 @@
 package com.example.widgets.ui.theme.composable
 
 import android.app.Activity
-import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +22,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -75,22 +74,22 @@ fun AppList(mainViewModel: MainViewModel, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun LazyColumnWithSelection(modifier: Modifier, installedPackages: SnapshotStateList<ApplicationInfo>, onClick: (Int) -> Unit) {
+fun LazyColumnWithSelection(modifier: Modifier, packageNames: List<String>, onClick: (Int) -> Unit) {
     LazyColumn(
         modifier = modifier,
     ) {
-        itemsIndexed(items = installedPackages) { index, packageInfo ->
+        itemsIndexed(items = packageNames) { index, packageName ->
             ItemView(
                 index = index,
                 onClick = onClick,
-                packageInfo,
+                packageName,
             )
         }
     }
 }
 
 @Composable
-fun ItemView(index: Int, onClick: (Int) -> Unit, packageInfo: ApplicationInfo) {
+fun ItemView(index: Int, onClick: (Int) -> Unit, packageName: String) {
     val configuration = LocalConfiguration.current
     val activity = (LocalContext.current as Activity)
     Row(
@@ -100,11 +99,12 @@ fun ItemView(index: Int, onClick: (Int) -> Unit, packageInfo: ApplicationInfo) {
             .padding(8.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = rememberDrawablePainter(drawable = getAppIcon(activity, packageInfo.packageName)),
+            modifier= Modifier.size(48.dp),
+            painter = rememberDrawablePainter(drawable = getAppIcon(activity, packageName)),
             contentDescription = "content description",
         )
         Text(
-            text = getAppNameFromPackageName(activity, packageInfo.packageName),
+            text = getAppNameFromPackageName(activity, packageName),
             modifier = Modifier.padding(12.dp)
                 .clickable {
                     onClick.invoke(index)

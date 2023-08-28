@@ -31,7 +31,7 @@ fun WidgetsNavHost(
         composable("AppList") {
             mainViewModel.processPackages(activity)
             AppList(mainViewModel) {
-                mainViewModel.getInstalledProvidersForPackage(activity, mainViewModel.installedPackages[it].packageName)
+                mainViewModel.getInstalledProvidersForPackage(activity, mainViewModel.installedPackages[it])
                 navController.navigate("WidgetDetails")
             }
         }
