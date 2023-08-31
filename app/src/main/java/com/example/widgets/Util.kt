@@ -8,6 +8,9 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Base64
+import androidx.core.graphics.drawable.toBitmap
+import com.example.widgets.model.Providers
+import com.example.widgets.model.Widget
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 
@@ -38,4 +41,13 @@ fun encodeToBase64(image: Bitmap): String? {
     val baos = ByteArrayOutputStream()
     image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
     return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
+}
+
+fun Providers.toWidget(context: Context): Widget {
+    val widgetProvider = providerInfo
+    return Widget(
+        provider = widgetProvider.provider.className,
+        ratio = widgetProvider.resizeMode.toString(),
+        preview = encodeToBase64(getWidgetPreviewImage(context, widgetProvider).toBitmap())
+    )
 }

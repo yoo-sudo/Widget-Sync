@@ -25,27 +25,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.example.widgets.BarcodeAnalyser
+import com.example.widgets.model.QrCodeData
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalGetImage::class) @Composable
-fun QrScanner() {
+fun QrScanner(onScanComplete: (QrCodeData) -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PreviewViewComposable()
+            PreviewViewComposable(onScanComplete)
             Text(
                 text = "Scan QR Code",
                 modifier = Modifier.padding(top = 48.dp)
             )
-
         }
     }
 }
 
 @Composable
-fun PreviewViewComposable() {
+fun PreviewViewComposable(onScanComplete: (QrCodeData) -> Unit) {
     AndroidView({ context ->
         val cameraExecutor = Executors.newSingleThreadExecutor()
         val previewView = PreviewView(context).also {
@@ -66,7 +66,8 @@ fun PreviewViewComposable() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, BarcodeAnalyser{
+                    it.setAnalyzer(cameraExecutor, BarcodeAnalyser{ qrCodeData ->
+                        onScanComplete(qrCodeData)
                         Toast.makeText(context, "Barcode found", Toast.LENGTH_SHORT).show()
                     })
                 }
@@ -87,6 +88,5 @@ fun PreviewViewComposable() {
         }, ContextCompat.getMainExecutor(context))
         previewView
     },
-        modifier = Modifier
-            .size(width = 250.dp, height = 250.dp))
+        modifier = Modifier.size(width = 250.dp, height = 250.dp))
 }

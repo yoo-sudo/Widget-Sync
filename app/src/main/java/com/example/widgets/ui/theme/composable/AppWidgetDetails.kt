@@ -32,7 +32,6 @@ import com.example.widgets.getWidgetPreviewImage
 import com.example.widgets.model.Providers
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
-
 @Composable
 fun AppWidgetDetails(mainViewModel: MainViewModel, context: Context, onClick: () -> Unit) {
     val onCheck = { index: Int ->
@@ -52,7 +51,7 @@ fun AppWidgetDetails(mainViewModel: MainViewModel, context: Context, onClick: ()
                         .padding(24.dp)
                 ) {
                     Text(
-                        text = getAppNameFromPackageName(context, mainViewModel.packageName), modifier = Modifier
+                        text = getAppNameFromPackageName(context, mainViewModel.selectPackageName), modifier = Modifier
                             .wrapContentSize()
                             .padding(12.dp), color = Color.Black
                     )
