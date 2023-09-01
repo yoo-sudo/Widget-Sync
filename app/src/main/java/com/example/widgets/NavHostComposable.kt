@@ -1,7 +1,6 @@
 package com.example.widgets
 
 import android.app.Activity
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -48,8 +47,8 @@ fun WidgetsNavHost(
             }
         }
         composable("qrScanner") {
-            QrScanner { qrCodeData ->
-                Log.d("XOXOXO", mainViewModel.buildWidgetData(activity, qrCodeData).customerId.toString())
+            QrScanner(mainViewModel) {
+                navController.popBackStack("AppList", false)
             }
         }
     }

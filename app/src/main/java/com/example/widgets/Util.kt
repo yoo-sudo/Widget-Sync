@@ -46,6 +46,7 @@ fun encodeToBase64(image: Bitmap): String? {
 fun Providers.toWidget(context: Context): Widget {
     val widgetProvider = providerInfo
     return Widget(
+        name = widgetProvider.loadLabel(context.packageManager),
         provider = widgetProvider.provider.className,
         ratio = widgetProvider.resizeMode.toString(),
         preview = encodeToBase64(getWidgetPreviewImage(context, widgetProvider).toBitmap())

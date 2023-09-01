@@ -51,7 +51,7 @@ fun AppWidgetDetails(mainViewModel: MainViewModel, context: Context, onClick: ()
                         .padding(24.dp)
                 ) {
                     Text(
-                        text = getAppNameFromPackageName(context, mainViewModel.selectPackageName), modifier = Modifier
+                        text = getAppNameFromPackageName(context, mainViewModel.SelectedAppPckName), modifier = Modifier
                             .wrapContentSize()
                             .padding(12.dp), color = Color.Black
                     )
