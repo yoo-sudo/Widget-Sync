@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.widgets.viewmodel.MainViewModel
-import com.example.widgets.getAppNameFromPackageName
 import com.example.widgets.getWidgetPreviewImage
 import com.example.widgets.model.Providers
 import com.example.widgets.ui.theme.EerieBlack
@@ -50,12 +49,13 @@ fun AppWidgetDetails(mainViewModel: MainViewModel, onClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(EerieBlack), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
+                    .background(EerieBlack),
+                horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = getAppNameFromPackageName(context, mainViewModel.SelectedAppPckName),
+                    text = mainViewModel.selectedAppDetail?.appName.toString(),
                     color = white,
-                    fontSize= 24.sp,
+                    fontSize = 24.sp,
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(start = 24.dp)
@@ -99,13 +99,15 @@ fun WidgetDetails(context: Context, onCheck: (Int) -> Unit, installedProviders: 
 
 @Composable
 fun WidgetItem(context: Context, index: Int, onCheck: (Int) -> Unit, appWidgetProvider: Providers) {
-    Column( modifier = Modifier
-        .wrapContentHeight()
-        .fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+    ) {
         Text(
-            text = "${index+1}. ${appWidgetProvider.providerInfo.loadLabel(context.packageManager)}",
+            text = "${index + 1}. ${appWidgetProvider.providerInfo.loadLabel(context.packageManager)}",
             color = white,
-            fontSize= 18.sp,
+            fontSize = 18.sp,
             modifier = Modifier
                 .wrapContentSize()
                 .padding(start = 24.dp, bottom = 18.dp)

@@ -1,6 +1,5 @@
 package com.example.widgets.composable
 
-import android.app.Activity
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -26,13 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.widgets.viewmodel.MainViewModel
 import com.example.widgets.R
-import com.example.widgets.getAppIcon
-import com.example.widgets.getAppNameFromPackageName
+import com.example.widgets.model.AppDetails
 import com.example.widgets.ui.theme.EerieBlack
 import com.example.widgets.ui.theme.darkerGray
 import com.example.widgets.ui.theme.white
@@ -62,24 +59,23 @@ fun AppList(mainViewModel: MainViewModel, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun LazyColumnWithSelection(modifier: Modifier, packageNames: List<String>, onClick: (Int) -> Unit) {
+fun LazyColumnWithSelection(modifier: Modifier, appDetails: List<AppDetails>, onClick: (Int) -> Unit) {
     LazyColumn(
         modifier = modifier,
     ) {
-        itemsIndexed(items = packageNames) { index, packageName ->
+        itemsIndexed(items = appDetails) { index, appDetail ->
             ItemView(
                 index = index,
                 onClick = onClick,
-                packageName,
+                appDetails = appDetail,
             )
         }
     }
 }
 
 @Composable
-fun ItemView(index: Int, onClick: (Int) -> Unit, packageName: String) {
+fun ItemView(index: Int, onClick: (Int) -> Unit, appDetails: AppDetails) {
     val configuration = LocalConfiguration.current
-    val activity = (LocalContext.current as Activity)
     Row(
         modifier = Modifier
             .wrapContentHeight()
@@ -88,11 +84,11 @@ fun ItemView(index: Int, onClick: (Int) -> Unit, packageName: String) {
     ) {
         Image(
             modifier= Modifier.size(48.dp),
-            painter = rememberDrawablePainter(drawable = getAppIcon(activity, packageName)),
-            contentDescription = "content description",
+            painter = rememberDrawablePainter(drawable = appDetails.appIcon),
+            contentDescription = "App icon",
         )
         Text(
-            text = getAppNameFromPackageName(activity, packageName),
+            text = appDetails.appName,
             color= white,
             modifier = Modifier.padding(12.dp)
                 .clickable {
