@@ -1,6 +1,5 @@
-package com.example.widgets.ui.theme.composable
+package com.example.widgets.composable
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -36,16 +35,16 @@ import java.util.concurrent.Executors
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
-fun QrScanner(mainViewModel: MainViewModel, onScanComplete: () -> Unit) {
+fun QrScanner(mainViewModel: MainViewModel, onBackPressed: (Boolean) -> Unit) {
+    BackHandler {
+        onBackPressed.invoke(mainViewModel.response.value is ApiState.Success)
+    }
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ProcessDataComposable(mainViewModel = mainViewModel, context = LocalContext.current)
-            BackHandler {
-                onScanComplete.invoke()
-            }
+            ProcessDataComposable(mainViewModel = mainViewModel)
         }
     }
 }
@@ -102,7 +101,8 @@ fun ScannerView(onScanComplete: (QrCodeData) -> Unit) {
 }
 
 @Composable
-fun ProcessDataComposable(mainViewModel: MainViewModel, context: Context) {
+fun ProcessDataComposable(mainViewModel: MainViewModel) {
+    val context = LocalContext.current
     when (val result = mainViewModel.response.value) {
         is ApiState.Success -> {
             Text(text = "Widgets Successfully sent to TAM")

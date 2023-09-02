@@ -8,24 +8,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.widgets.ui.theme.composable.AppList
-import com.example.widgets.ui.theme.composable.AppWidgetDetails
-import com.example.widgets.ui.theme.composable.QrScanner
+import com.example.widgets.composable.AppList
+import com.example.widgets.composable.AppWidgetDetails
+import com.example.widgets.composable.QrScanner
 import com.example.widgets.viewmodel.MainViewModel
 
 @Composable
 fun WidgetsHost(mainViewModel: MainViewModel) {
     val navController = rememberNavController()
-    WidgetsNavHost(
-        navController = navController,
-        mainViewModel = mainViewModel
-    )
+    WidgetsNavHost(navController = navController, mainViewModel = mainViewModel)
 }
 
 @Composable
 fun WidgetsNavHost(
     navController: NavHostController,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
 ) {
     val activity = (LocalContext.current as Activity)
     NavHost(navController = navController, startDestination = "AppList") {
@@ -38,7 +35,7 @@ fun WidgetsNavHost(
             }
         }
         composable("WidgetDetails") {
-            AppWidgetDetails(mainViewModel, activity) {
+            AppWidgetDetails(mainViewModel) {
                 if (mainViewModel.getSelectedWidgets().isNotEmpty()) {
                     navController.navigate("qrScanner")
                 } else {
@@ -47,8 +44,12 @@ fun WidgetsNavHost(
             }
         }
         composable("qrScanner") {
-            QrScanner(mainViewModel) {
-                navController.popBackStack("AppList", false)
+            QrScanner(mainViewModel) { widgetDataSent ->
+                if (widgetDataSent) {
+                    navController.popBackStack("AppList", false)
+                } else {
+                    navController.popBackStack()
+                }
             }
         }
     }

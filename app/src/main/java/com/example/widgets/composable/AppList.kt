@@ -1,4 +1,4 @@
-package com.example.widgets.ui.theme.composable
+package com.example.widgets.composable
 
 import android.app.Activity
 import android.content.res.Configuration
@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,12 +33,15 @@ import com.example.widgets.viewmodel.MainViewModel
 import com.example.widgets.R
 import com.example.widgets.getAppIcon
 import com.example.widgets.getAppNameFromPackageName
+import com.example.widgets.ui.theme.EerieBlack
+import com.example.widgets.ui.theme.darkerGray
+import com.example.widgets.ui.theme.white
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppList(mainViewModel: MainViewModel, onClick: (Int) -> Unit) {
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Surface(modifier = Modifier.fillMaxSize(), color = darkerGray) {
         Column {
             TopAppBar(title = {
                 Row(
@@ -45,30 +49,14 @@ fun AppList(mainViewModel: MainViewModel, onClick: (Int) -> Unit) {
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.displaySmall
+                        text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.displaySmall, color = white
                     )
                 }
-            })
+            },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = EerieBlack ))
             LazyColumnWithSelection(
                 modifier = Modifier
                 .height(700.dp), mainViewModel.installedPackages, onClick = onClick)
-//            Box(modifier = Modifier
-//                .align(Alignment.CenterHorizontally)
-//                .wrapContentSize()) {
-//                Button(onClick = {
-////                    val selectedProviders = mainViewModel.installedProviders.filter { it.isChecked }
-////                    selectedProviders.forEach {
-////                        Log.i("provider", toJsonString(it.providerInfo.provider)!!)
-////                        Log.i("packageName", it.providerInfo.provider.packageName)
-////                        Log.i("minHeight", it.providerInfo.minHeight.toString())
-////                        Log.i("minWidth", it.providerInfo.minWidth.toString())
-////                        Log.i("appName", getAppNameFromPackageName(this@MainActivity, it.providerInfo.provider.packageName))
-////                        Log.i("appIcon", encodeToBase64(getAppIcon(this@MainActivity, it.providerInfo.provider.packageName)).toString())
-////                    }
-//                }) {
-//                    Text(text = "Send Providers", Modifier.wrapContentSize(), color = Color.White)
-//                }
-//            }
         }
     }
 }
@@ -105,6 +93,7 @@ fun ItemView(index: Int, onClick: (Int) -> Unit, packageName: String) {
         )
         Text(
             text = getAppNameFromPackageName(activity, packageName),
+            color= white,
             modifier = Modifier.padding(12.dp)
                 .clickable {
                     onClick.invoke(index)
