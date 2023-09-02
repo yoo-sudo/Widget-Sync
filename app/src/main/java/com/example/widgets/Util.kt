@@ -7,8 +7,8 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.Base64
-import android.util.Log
 import androidx.core.graphics.drawable.toBitmap
 import com.example.widgets.model.AppDetails
 import com.example.widgets.model.Providers
@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream
 
 fun getWidgetPreviewImage(context: Context, widgetProviderInfo: AppWidgetProviderInfo): Drawable {
     val resources: Resources = context.packageManager.getResourcesForApplication(widgetProviderInfo.provider.packageName)
-    Log.d("XOXOXO", resources.displayMetrics.densityDpi.toString())
     return widgetProviderInfo.loadPreviewImage(context, resources.displayMetrics.densityDpi)
 }
 
@@ -42,9 +41,15 @@ fun Providers.toWidget(context: Context): Widget {
     return Widget(
         name = widgetProvider.loadLabel(context.packageManager),
         provider = widgetProvider.provider.className,
-        ratio = widgetProvider.resizeMode.toString(),
+        ratio =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            "${widgetProvider.targetCellWidth} * ${widgetProvider.targetCellHeight}"
+        } else {
+            ""
+        },
         preview = encodeToBase64(getWidgetPreviewImage(context, widgetProvider).toBitmap())
     )
+
 }
 
 fun AppWidgetProviderInfo.toAppDetails(context: Context): AppDetails {
