@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.util.Base64
 import androidx.core.graphics.drawable.toBitmap
 import com.example.widgets.model.AppDetails
@@ -15,9 +14,13 @@ import com.example.widgets.model.Providers
 import com.example.widgets.model.Widget
 import java.io.ByteArrayOutputStream
 
-fun getWidgetPreviewImage(context: Context, widgetProviderInfo: AppWidgetProviderInfo): Drawable {
-    val resources: Resources = context.packageManager.getResourcesForApplication(widgetProviderInfo.provider.packageName)
-    return widgetProviderInfo.loadPreviewImage(context, resources.displayMetrics.densityDpi)
+fun getWidgetPreviewImage(context: Context, widgetProviderInfo: AppWidgetProviderInfo): Drawable? {
+    return try {
+        val resources: Resources = context.packageManager.getResourcesForApplication(widgetProviderInfo.provider.packageName)
+        widgetProviderInfo.loadPreviewImage(context, resources.displayMetrics.densityDpi)
+    } catch (e :Exception) {
+        null
+    }
 }
 
 fun getAppNameFromPackageName(context: Context, packageName: String): String {
@@ -38,16 +41,14 @@ fun encodeToBase64(image: Bitmap?): String? {
 
 fun Providers.toWidget(context: Context): Widget {
     val widgetProvider = providerInfo
+    val width = providerInfo.minWidth
+    val height =providerInfo.minHeight
+    val preview = getWidgetPreviewImage(context, providerInfo)
     return Widget(
         name = widgetProvider.loadLabel(context.packageManager),
         provider = widgetProvider.provider.className,
-        ratio =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            "${widgetProvider.targetCellWidth} * ${widgetProvider.targetCellHeight}"
-        } else {
-            ""
-        },
-        preview = encodeToBase64(getWidgetPreviewImage(context, widgetProvider).toBitmap())
+        ratio = "$width * $height",
+        preview = if (preview!= null) {encodeToBase64(preview.toBitmap()) } else { "" }
     )
 
 }

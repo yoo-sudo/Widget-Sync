@@ -1,7 +1,6 @@
 package com.example.widgets.composable
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.drawable.toBitmap
 import com.example.widgets.viewmodel.MainViewModel
 import com.example.widgets.getWidgetPreviewImage
 import com.example.widgets.model.Providers
@@ -122,10 +120,25 @@ fun WidgetItem(context: Context, index: Int, onCheck: (Int) -> Unit, appWidgetPr
             Checkbox(checked = appWidgetProvider.isChecked, colors = myCheckBoxColors(), onCheckedChange = {
                 onCheck.invoke(index)
             })
-            Log.d("XOXOXO", getWidgetPreviewImage(context, appWidgetProvider.providerInfo).toBitmap().toString())
-            Image(
-                painter = rememberDrawablePainter(drawable = getWidgetPreviewImage(context, appWidgetProvider.providerInfo)),
-                contentDescription = "content description",
+            val preview = getWidgetPreviewImage(context, appWidgetProvider.providerInfo)
+            if (preview != null) {
+                Image(
+                    painter = rememberDrawablePainter(drawable =preview),
+                    contentDescription = "Widget preview",
+                )
+            } else {
+                Text(
+                    text = "**Preview not Available**", modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(), fontSize = 18.sp, color = white
+                )
+            }
+            val widthCell = appWidgetProvider.providerInfo.minWidth
+            val heightCell = appWidgetProvider.providerInfo.minHeight
+            Text(
+                text = "$widthCell * $heightCell", modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(), fontSize = 16.sp, color = white
             )
         }
     }
