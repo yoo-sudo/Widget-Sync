@@ -49,7 +49,6 @@ fun QrScanner(mainViewModel: MainViewModel, onBackPressed: (Boolean) -> Unit) {
     }
 }
 
-
 @Composable
 fun ScannerView(onScanComplete: (QrCodeData) -> Unit) {
     AndroidView(

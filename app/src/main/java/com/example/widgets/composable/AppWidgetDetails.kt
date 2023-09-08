@@ -98,13 +98,15 @@ fun WidgetDetails(context: Context, onCheck: (Int) -> Unit, installedProviders: 
 
 @Composable
 fun WidgetItem(context: Context, index: Int, onCheck: (Int) -> Unit, appWidgetProvider: Providers) {
+    val widthCell = appWidgetProvider.providerInfo.minWidth
+    val heightCell = appWidgetProvider.providerInfo.minHeight
     Column(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
     ) {
         Text(
-            text = "${index + 1}. ${appWidgetProvider.providerInfo.loadLabel(context.packageManager)}",
+            text = "${index + 1}. ${appWidgetProvider.providerInfo.loadLabel(context.packageManager)}.  $widthCell * $heightCell",
             color = white,
             fontSize = 18.sp,
             modifier = Modifier
@@ -133,13 +135,6 @@ fun WidgetItem(context: Context, index: Int, onCheck: (Int) -> Unit, appWidgetPr
                         .wrapContentHeight(), fontSize = 18.sp, color = white
                 )
             }
-            val widthCell = appWidgetProvider.providerInfo.minWidth
-            val heightCell = appWidgetProvider.providerInfo.minHeight
-            Text(
-                text = "$widthCell * $heightCell", modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(), fontSize = 16.sp, color = white
-            )
         }
     }
 }

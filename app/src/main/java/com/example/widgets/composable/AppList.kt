@@ -80,6 +80,9 @@ fun ItemView(index: Int, onClick: (Int) -> Unit, appDetails: AppDetails) {
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
+            .clickable {
+                onClick.invoke(index)
+            }
             .padding(8.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -91,9 +94,6 @@ fun ItemView(index: Int, onClick: (Int) -> Unit, appDetails: AppDetails) {
             text = appDetails.appName,
             color= white,
             modifier = Modifier.padding(12.dp)
-                .clickable {
-                    onClick.invoke(index)
-                }
                 .wrapContentHeight()
                 .width(if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 700.dp else 350.dp)
         )

@@ -37,13 +37,13 @@ fun WidgetsNavHost(
         composable("WidgetDetails") {
             AppWidgetDetails(mainViewModel) {
                 if (mainViewModel.getSelectedWidgets().isNotEmpty()) {
-                    navController.navigate("qrScanner")
+                    navController.navigate("QrScanner")
                 } else {
                     Toast.makeText(activity, "Select widget to send", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        composable("qrScanner") {
+        composable("QrScanner") {
             QrScanner(mainViewModel) { widgetDataSent ->
                 if (widgetDataSent) {
                     navController.popBackStack("AppList", false)
