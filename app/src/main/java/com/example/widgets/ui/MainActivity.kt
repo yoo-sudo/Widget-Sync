@@ -46,21 +46,21 @@ class MainActivity : ComponentActivity() {
         checkIfPermissionGranted()
         setContent {
             setContent {
-                if (permissionState.value) {
-                    WidgetsTheme {
+                WidgetsTheme {
+                    if (permissionState.value) {
                         WidgetsHost(mainViewModel)
+                    } else {
+                        PermissionScreen(
+                            showAlert = showAlertDialog.value,
+                            onClick = {
+                                checkIfPermissionGranted()
+                            },
+                            onRationaleReply = { accepted ->
+                                if (accepted) {
+                                    permissionRequest.launch(CAMERA)
+                                }
+                            })
                     }
-                } else {
-                    PermissionScreen(
-                        showAlert = showAlertDialog.value,
-                        onClick = {
-                            checkIfPermissionGranted()
-                        },
-                        onRationaleReply = { accepted ->
-                            if (accepted) {
-                                permissionRequest.launch(CAMERA)
-                            }
-                        })
                 }
             }
         }
