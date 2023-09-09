@@ -2,11 +2,9 @@ package com.example.widgets.composable
 
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,8 +16,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -36,6 +38,7 @@ import com.example.widgets.ui.theme.darkerGray
 import com.example.widgets.ui.theme.white
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppWidgetDetails(mainViewModel: MainViewModel, onClick: () -> Unit) {
     val onCheck = { index: Int ->
@@ -44,27 +47,24 @@ fun AppWidgetDetails(mainViewModel: MainViewModel, onClick: () -> Unit) {
     val context = LocalContext.current
     Surface(modifier = Modifier.fillMaxSize(), color = darkerGray) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(EerieBlack),
-                horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = mainViewModel.selectedAppDetail?.appName.toString(),
-                    color = white,
-                    fontSize = 24.sp,
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(start = 24.dp)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Button(modifier = Modifier.padding(24.dp), onClick = onClick) {
-                    Text(text = "Send Providers", Modifier.wrapContentSize(), color = Color.White)
+            TopAppBar(title = {
+                Row(
+                    Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = mainViewModel.selectedAppDetail?.appName.toString(), style = MaterialTheme.typography.titleLarge, color = white
+                    )
                 }
-            }
+            }, colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = EerieBlack))
             WidgetDetails(context = context, onCheck = onCheck, installedProviders = mainViewModel.providerInfo)
+
+        }
+        Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.Bottom) {
+            Button(modifier = Modifier.padding(12.dp), onClick = onClick) {
+                Text(text = "Send Providers", Modifier.wrapContentSize(), color = Color.White)
+            }
         }
     }
 }
@@ -73,16 +73,14 @@ fun AppWidgetDetails(mainViewModel: MainViewModel, onClick: () -> Unit) {
 fun WidgetDetails(context: Context, onCheck: (Int) -> Unit, installedProviders: SnapshotStateList<Providers>) {
     if (installedProviders.isEmpty()) {
         Text(
-            text = "No Widgets to show!", modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(), fontSize = 16.sp
+            text = "No Widgets to show!", fontSize = 16.sp
         )
     } else {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = 24.dp),
+                .padding(top = 24.dp, bottom = 60.dp),
         ) {
             itemsIndexed(items = installedProviders) { index, appWidgetProviderInfo ->
                 WidgetItem(
@@ -125,7 +123,7 @@ fun WidgetItem(context: Context, index: Int, onCheck: (Int) -> Unit, appWidgetPr
             val preview = getWidgetPreviewImage(context, appWidgetProvider.providerInfo)
             if (preview != null) {
                 Image(
-                    painter = rememberDrawablePainter(drawable =preview),
+                    painter = rememberDrawablePainter(drawable = preview),
                     contentDescription = "Widget preview",
                 )
             } else {

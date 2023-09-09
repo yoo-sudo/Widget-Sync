@@ -46,7 +46,7 @@ fun AppList(mainViewModel: MainViewModel, onClick: (Int) -> Unit) {
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.displaySmall, color = white
+                        text = stringResource(id = R.string.app_name), style = MaterialTheme.typography.titleLarge, color = white
                     )
                 }
             },
